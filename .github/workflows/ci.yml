@@ -1,4 +1,5 @@
 name: PayLink CI
+
 on:
   push:
     branches:
@@ -7,10 +8,14 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
+
+  
   build:
     name: Build
     runs-on: ubuntu-latest
+
     steps:
       - name: Get the code
         uses: actions/checkout@v4
@@ -25,9 +30,15 @@ jobs:
 
       - name: Check Python code
         run: python -m compileall -q app
+
+      - name: Build Docker image
+        run: docker build -t paylink .
+
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
+
     steps:
       - name: Get the code
         uses: actions/checkout@v4
@@ -37,9 +48,12 @@ jobs:
 
       - name: Check code quality
         run: ruff check app
+
+
   test:
     name: Test
     runs-on: ubuntu-latest
+
     steps:
       - name: Get the code
         uses: actions/checkout@v4
@@ -50,7 +64,9 @@ jobs:
           python-version: '3.12'
 
       - name: Install requirements
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install pytest
 
       - name: Run tests
-        run: pytest
+        run: python -m pytest
